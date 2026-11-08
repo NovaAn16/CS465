@@ -13,6 +13,9 @@ var travelRouter = require('./app_server/routes/travel');
 
 var app = express();
 
+// Initialize MongoDB connection
+require('./app_server/models/db');
+
 // View engine setup
 app.set('views', path.join(__dirname, 'app_server', 'views'));
 
