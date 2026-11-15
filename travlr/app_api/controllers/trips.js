@@ -1,10 +1,9 @@
 
 const mongoose = require('mongoose');
 
-// Use the existing Mongoose Trip model
 const Trip = mongoose.model('trips');
 
-// GET: Return all trips from MongoDB
+// GET: Retrieve all trips
 const tripsList = async (req, res) => {
     try {
         const trips = await Trip.find({}).exec();
@@ -19,20 +18,17 @@ const tripsList = async (req, res) => {
 
     } catch (err) {
         console.error('Error retrieving trips:', err);
-
         return res.status(500).json({
             message: 'Error retrieving trips from database'
         });
     }
 };
 
-// GET: Return one trip by its code
+// GET: Retrieve one trip by code
 const tripsFindByCode = async (req, res) => {
     try {
-        const tripCode = req.params.tripCode;
-
         const trip = await Trip.findOne({
-            code: tripCode
+            code: req.params.tripCode
         }).exec();
 
         if (!trip) {
@@ -45,28 +41,20 @@ const tripsFindByCode = async (req, res) => {
 
     } catch (err) {
         console.error('Error retrieving trip:', err);
-
         return res.status(500).json({
             message: 'Error retrieving trip from database'
         });
     }
 };
 
-// POST: Add a new trip to MongoDB
+// POST: Add a new trip
 const tripsAdd = async (req, res) => {
     try {
         const {
-            code,
-            name,
-            length,
-            start,
-            resort,
-            perPerson,
-            image,
-            description
+            code, name, length, start,
+            resort, perPerson, image, description
         } = req.body;
 
-        // Check that this trip code is not already in use
         const existingTrip = await Trip.findOne({ code }).exec();
 
         if (existingTrip) {
@@ -75,16 +63,9 @@ const tripsAdd = async (req, res) => {
             });
         }
 
-        // Create and save the new trip
         const newTrip = await Trip.create({
-            code,
-            name,
-            length,
-            start,
-            resort,
-            perPerson,
-            image,
-            description
+            code, name, length, start,
+            resort, perPerson, image, description
         });
 
         return res.status(201).json(newTrip);
@@ -106,8 +87,55 @@ const tripsAdd = async (req, res) => {
     }
 };
 
+// PUT: Update an existing trip by code
+const tripsUpdateTrip = async (req, res) => {
+    try {
+        const trip = await Trip.findOneAndUpdate(
+            { code: req.params.tripCode },
+            {
+                code: req.body.code,
+                name: req.body.name,
+                length: req.body.length,
+                start: req.body.start,
+                resort: req.body.resort,
+                perPerson: req.body.perPerson,
+                image: req.body.image,
+                description: req.body.description
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        ).exec();
+
+        if (!trip) {
+            return res.status(404).json({
+                message: 'Trip not found'
+            });
+        }
+
+        return res.status(200).json(trip);
+
+    } catch (err) {
+        console.error('Error updating trip:', err);
+
+        if (err.name === 'ValidationError' ||
+            err.name === 'CastError') {
+            return res.status(400).json({
+                message: 'Invalid trip information.',
+                details: err.message
+            });
+        }
+
+        return res.status(500).json({
+            message: 'Error updating trip in database'
+        });
+    }
+};
+
 module.exports = {
     tripsList,
     tripsFindByCode,
-    tripsAdd
+    tripsAdd,
+    tripsUpdateTrip
 };

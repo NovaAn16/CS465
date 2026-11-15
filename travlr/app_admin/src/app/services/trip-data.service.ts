@@ -15,13 +15,28 @@ export class TripDataService {
 
   constructor(private http: HttpClient) {}
 
-  // Retrieve all trips from MongoDB
+  // GET: Retrieve all trips from MongoDB
   public getTrips(): Observable<Trip[]> {
     return this.http.get<Trip[]>(this.tripsUrl);
   }
 
-  // Save a new trip in MongoDB
+  // GET: Retrieve one trip by its code
+  public getTrip(tripCode: string): Observable<Trip> {
+    const url = `${this.tripsUrl}/${encodeURIComponent(tripCode)}`;
+    return this.http.get<Trip>(url);
+  }
+
+  // POST: Add a new trip to MongoDB
   public addTrip(trip: Trip): Observable<Trip> {
     return this.http.post<Trip>(this.tripsUrl, trip);
+  }
+
+  // PUT: Update an existing trip in MongoDB
+  public updateTrip(
+    tripCode: string,
+    trip: Trip
+  ): Observable<Trip> {
+    const url = `${this.tripsUrl}/${encodeURIComponent(tripCode)}`;
+    return this.http.put<Trip>(url, trip);
   }
 }
