@@ -1,0 +1,23 @@
+
+<!-- Travlr Getaways Trip Listing -->
+
+<div class="mb-3">
+  <button
+    type="button"
+    class="btn btn-info"
+    (click)="addTrip()">
+    Add Trip
+  </button>
+</div>
+
+<div class="row g-4">
+
+  <div
+    *ngFor="let trip of trips"
+    class="col-12 col-md-4">
+
+    <app-trip-card [trip]="trip"></app-trip-card>
+
+  </div>
+
+</div>

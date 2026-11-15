@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var handlebars = require('hbs');
 
-// Initialize MongoDB and register Mongoose models FIRST
+// Initialize MongoDB and register the Mongoose models first
 require('./app_api/models/db');
 
 // Website routes
@@ -14,7 +14,7 @@ var indexRouter = require('./app_server/routes/index');
 var usersRouter = require('./app_server/routes/users');
 var travelRouter = require('./app_server/routes/travel');
 
-// Module 5 - RESTful API routes
+// RESTful API routes
 var apiRouter = require('./app_api/routes/index');
 
 var app = express();
@@ -22,7 +22,6 @@ var app = express();
 // View engine setup
 app.set('views', path.join(__dirname, 'app_server', 'views'));
 
-// Register Handlebars partials
 handlebars.registerPartials(
     path.join(__dirname, 'app_server', 'views', 'partials')
 );
@@ -36,12 +35,31 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Module 6 - Enable CORS for the Angular admin application
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
+    res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
+    res.header(
+        'Access-Control-Allow-Methods',
+        'GET, POST, PUT, DELETE, OPTIONS'
+    );
+
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(204);
+    }
+
+    next();
+});
+
 // Website routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/travel', travelRouter);
 
-// Module 5 - RESTful API routes
+// RESTful API routes
 app.use('/api', apiRouter);
 
 // Catch 404 and forward to error handler
