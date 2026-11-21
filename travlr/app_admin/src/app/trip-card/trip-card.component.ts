@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { Trip } from '../models/trip';
+import { AuthenticationService } from '../services/authentication.service';
 
 @Component({
   selector: 'app-trip-card',
@@ -16,16 +17,25 @@ export class TripCardComponent implements OnInit {
 
   @Input('trip') trip!: Trip;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authenticationService: AuthenticationService
+  ) {}
 
   ngOnInit(): void {
   }
 
-  public editTrip(trip: Trip): void {
-    // Save the selected trip code for the Edit Trip page
-    localStorage.setItem('tripCode', trip.code);
+  public isLoggedIn(): boolean {
+    return this.authenticationService.isLoggedIn();
+  }
 
-    // Open the Edit Trip component
-    this.router.navigate(['edit-trip']);
+  public editTrip(trip: Trip): void {
+    if (!this.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    localStorage.setItem('tripCode', trip.code);
+    this.router.navigate(['/edit-trip']);
   }
 }

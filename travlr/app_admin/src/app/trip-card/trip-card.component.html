@@ -1,6 +1,4 @@
 
-<!-- Display one trip as a Bootstrap card -->
-
 <div class="card h-100 shadow-sm">
 
   <div class="card-header">
@@ -30,13 +28,17 @@
 
   </div>
 
-  <div class="card-footer bg-transparent">
+  <div
+    *ngIf="isLoggedIn()"
+    class="card-footer bg-transparent">
+
     <button
       type="button"
       class="btn btn-info"
       (click)="editTrip(trip)">
       Edit Trip
     </button>
+
   </div>
 
 </div>

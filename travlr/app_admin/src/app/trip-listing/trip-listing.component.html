@@ -1,20 +1,24 @@
 
-<!-- Travlr Getaways Trip Listing -->
+<!-- Add Trip button: authenticated users only -->
 
-<div class="mb-3">
+<div *ngIf="isLoggedIn()" class="mb-3">
+
   <button
     type="button"
     class="btn btn-info"
     (click)="addTrip()">
     Add Trip
   </button>
+
 </div>
+
+<!-- Display trips for all visitors -->
 
 <div class="row g-4">
 
   <div
     *ngFor="let trip of trips"
-    class="col-12 col-md-4">
+    class="col-12 col-md-6 col-lg-4">
 
     <app-trip-card [trip]="trip"></app-trip-card>
 
